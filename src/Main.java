@@ -50,38 +50,68 @@ public class Main {
 
 
             switch (selectedOption){
-                case CONSULT_BALANCE -> System.out.println(dao.consultBalance());
-                case CONSULT_SPECIAL_CHECK -> {
-                    if(dao.consultSpecialCheckInUse() > dao.consultSpecialCheck()){
-                        System.out.printf("Você usou todo o valor (R$ %s) disponível no seu cheque especial", dao.consultSpecialCheck());
-                    }else {
-                        System.out.printf("Você usou R$ %s de R$ %s disponível no seu cheque especial", dao.consultSpecialCheckInUse(), dao.consultSpecialCheck());
+                case CONSULT_BALANCE -> {
+                    if(dao != null) {
+                        System.out.printf("Seu saldo é de R$ %s\n", dao.consultBalance());
                     }
+                }
+                case CONSULT_SPECIAL_CHECK -> {
+                    if(dao != null) {
+                        if(dao.consultSpecialCheckInUse() > dao.consultSpecialCheck()){
+                            System.out.printf("Você usou todo o valor (R$ %s) disponível no seu cheque especial\n", dao.consultSpecialCheck());
+                        }else {
+                            System.out.printf("Você usou R$ %s de R$ %s disponível no seu cheque especial\n", dao.consultSpecialCheckInUse(), dao.consultSpecialCheck());
+                        }
+                    }
+
                 }
                 case MAKE_DEPOSIT -> {
                     System.out.println("Quanto deseja depositar?");
                     double value = scanner.nextDouble();
-                    dao.makeDeposit(value);
-                    System.out.printf("Depósito realizado no valor de %s", value);
+                    if(dao != null) {
+                        dao.makeDeposit(value);
+                        System.out.printf("Depósito realizado no valor de %s\n", value);
+                    }
                 }
                 case WITHDRAW -> {
                     System.out.println("Quanto deseja sacar?");
                     double value = scanner.nextDouble();
 
-                    try {
-                        dao.makeWithDraw(value);
-                        System.out.println("Saque realizado");
-                    }catch (SpecialCheckNotSufficient ex){
-                        System.out.println(ex.getMessage());
+                    if(dao != null) {
+                        try {
+                            dao.makeWithDraw(value);
+                            System.out.printf("Saque realizado no valor de R$ %s", value);
+                        }catch (SpecialCheckNotSufficient ex){
+                            System.out.println(ex.getMessage());
+                        }
                     }
+
+
                 }
                 case MAKE_PAYMENT -> {
-                    System.out.println("Executando pagamento");
+                    System.out.println("Digite para quem será destinado o pagamento (Nº da conta ou chave pix)");
+                    String paymentDestination = scanner.next();
+                    System.out.println("Digite o valor do pagamento");
+                    double value = scanner.nextDouble();
+
+                    if(dao != null) {
+                        try {
+                            dao.makePayment(value);
+                            System.out.printf("Pagamento no valor de R$ %s realizado para %s\n", value, paymentDestination);
+                        }catch (SpecialCheckNotSufficient ex){
+                            System.out.println(ex.getMessage());
+                        }
+                    }
+
                 }
                 case VERIFY_USE_SPECIAL_CHECK -> {
-                    boolean useSpecialCheck = dao.isUseSpecialCheck();
-                    var result = useSpecialCheck ? "Você está utilizando o seu cheque especial" : "Você não está utilizando o seu cheque especial";
-                    System.out.println(result);
+
+                    if(dao != null) {
+                        boolean useSpecialCheck = dao.isUseSpecialCheck();
+                        var result = useSpecialCheck ? "Você está utilizando o seu cheque especial" : "Você não está utilizando o seu cheque especial";
+                        System.out.println(result);
+                    }
+
                 }
                 case EXIT -> System.exit(0);
             }

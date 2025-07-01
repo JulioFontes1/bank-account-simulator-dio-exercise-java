@@ -63,14 +63,17 @@ public class AccountDAO {
     }
 
     public void makePayment(final double value){
+        double specialCheckValue = accountModel.getSpecialCheckValue();
         double currentBalance = accountModel.getBalance();
-
         double balance = currentBalance - value;
+
+        AccountValidator.specialCheckValidator(specialCheckValue, currentBalance, value);
+
         if (balance < 0){
             accountModel.setUseSpecialCheck(true);
         }
-
         accountModel.setBalance(balance);
+        accountModel.setSpecialCheckValueInUse();
     }
 
 
