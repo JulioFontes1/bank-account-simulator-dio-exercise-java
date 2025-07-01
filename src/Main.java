@@ -1,0 +1,75 @@
+import java.util.Scanner;
+
+import br.com.julio.dao.AccountDAO;
+import br.com.julio.model.AccountModel;
+import br.com.julio.model.MenuOption;
+
+import br.com.julio.model.MenuOption;
+
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+    public static void main(String[] args) {
+
+        AccountModel accountModel = new AccountModel();
+        AccountDAO dao = null;
+        Scanner scanner = new Scanner(System.in);
+
+        while (true){
+
+            if(!accountModel.isCreatedAccount()){
+                System.out.println("Digite seu nome");
+                String name = scanner.next();
+                System.out.println("Quanto deseja depositar ao abrir a conta");
+                double initialBalance = scanner.nextDouble();
+
+                accountModel = new AccountModel(name, initialBalance);
+                dao = new AccountDAO(accountModel);
+                accountModel.setCreatedAccount(true);
+            }
+
+            System.out.println("Selecione o número com a opção que deseja\n");
+
+            System.out.println("1 - Consultar saldo");
+            System.out.println("2 - Consultar cheque especial");
+            System.out.println("3 - Realizar depósito");
+            System.out.println("4 - Sacar");
+            System.out.println("5 - Realizar pagamento");
+            System.out.println("6 - Verificar se a conta está usando cheque especial");
+            System.out.println("7 - Sair");
+
+            int userInput = scanner.nextInt();
+
+            if(userInput < 1 || userInput > MenuOption.values().length){
+                System.out.printf("Opção %s inválida", userInput);
+            }
+
+            MenuOption selectedOption = MenuOption.values()[userInput - 1];
+
+
+            switch (selectedOption){
+                case CONSULT_BALANCE -> System.out.println(dao.consultBalance());
+                case CONSULT_SPECIAL_CHECK -> System.out.println(dao.consultSpecialCheck());
+                case MAKE_DEPOSIT -> {
+                    System.out.println("Quanto deseja depositar?");
+                    double value = scanner.nextDouble();
+                    dao.makeDeposit(value);
+                    System.out.printf("Depósito realizado no valor de %s", value);
+                }
+                case WITHDRAW -> {
+                    System.out.println("Quanto deseja sacar?");
+                    double value = scanner.nextDouble();
+                    dao.makeWithDraw(value);
+                    System.out.printf("Saque realizado no valor de %s", value);
+                }
+                case MAKE_PAYMENT -> {
+                    System.out.println("Executando pagamento");
+                }
+                case VERIFY_USE_SPECIAL_CHECK -> System.out.println("Verificando uso do cheque especial");
+                case EXIT -> System.exit(0);
+            }
+
+        }
+    }
+}
