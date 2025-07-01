@@ -52,7 +52,11 @@ public class Main {
             switch (selectedOption){
                 case CONSULT_BALANCE -> System.out.println(dao.consultBalance());
                 case CONSULT_SPECIAL_CHECK -> {
-                    System.out.printf("Você usou R$ %s de R$ %s disponível no seu cheque especial", dao.consultSpecialCheckInUse(), dao.consultSpecialCheck());
+                    if(dao.consultSpecialCheckInUse() > dao.consultSpecialCheck()){
+                        System.out.printf("Você usou todo o valor (R$ %s) disponível no seu cheque especial", dao.consultSpecialCheck());
+                    }else {
+                        System.out.printf("Você usou R$ %s de R$ %s disponível no seu cheque especial", dao.consultSpecialCheckInUse(), dao.consultSpecialCheck());
+                    }
                 }
                 case MAKE_DEPOSIT -> {
                     System.out.println("Quanto deseja depositar?");
@@ -65,18 +69,20 @@ public class Main {
                     double value = scanner.nextDouble();
 
                     try {
-
                         dao.makeWithDraw(value);
-                        System.out.printf("Saque realizado no valor de %s\n", value);
-
-                    } catch (SpecialCheckNotSufficient ex) {
+                        System.out.println("Saque realizado");
+                    }catch (SpecialCheckNotSufficient ex){
                         System.out.println(ex.getMessage());
                     }
                 }
                 case MAKE_PAYMENT -> {
                     System.out.println("Executando pagamento");
                 }
-                case VERIFY_USE_SPECIAL_CHECK -> System.out.println("Verificando uso do cheque especial");
+                case VERIFY_USE_SPECIAL_CHECK -> {
+                    boolean useSpecialCheck = dao.isUseSpecialCheck();
+                    var result = useSpecialCheck ? "Você está utilizando o seu cheque especial" : "Você não está utilizando o seu cheque especial";
+                    System.out.println(result);
+                }
                 case EXIT -> System.exit(0);
             }
 

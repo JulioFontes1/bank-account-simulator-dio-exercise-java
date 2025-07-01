@@ -39,25 +39,25 @@ public class AccountDAO {
         }
 
         accountModel.setBalance(balance);
+        accountModel.setSpecialCheckValueInUse();
     }
 
     public void makeWithDraw(final double value){
 
 
-        try {
+
             double specialCheckValue = accountModel.getSpecialCheckValue();
             double currentBalance = accountModel.getBalance();
             double balance = currentBalance - value;
 
-            AccountValidator.specialCheckValidator(specialCheckValue, balance, value);
+            AccountValidator.specialCheckValidator(specialCheckValue, currentBalance, value);
 
             if (balance < 0){
                 accountModel.setUseSpecialCheck(true);
             }
             accountModel.setBalance(balance);
-        }catch (SpecialCheckNotSufficient ex){
-            ex.printStackTrace();
-        }
+            accountModel.setSpecialCheckValueInUse();
+
 
 
     }

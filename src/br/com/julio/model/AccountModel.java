@@ -34,10 +34,6 @@ public class AccountModel {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public double getBalance() {
         return balance;
     }
@@ -48,10 +44,6 @@ public class AccountModel {
 
     public double getSpecialCheckValue() {
         return specialCheckValue;
-    }
-
-    public void setSpecialCheckValue(double specialCheckValue) {
-        this.specialCheckValue = specialCheckValue;
     }
 
     public boolean isUseSpecialCheck() {
@@ -75,8 +67,16 @@ public class AccountModel {
     }
 
     public void setSpecialCheckValueInUse() {
-        if(this.balance < 0){
-            this.specialCheckValueInUse = this.specialCheckValue - (this.specialCheckValue + this.balance);
-        }
+            if(this.balance > 0){
+                this.specialCheckValueInUse = 0;
+            }else {
+                this.specialCheckValueInUse = this.specialCheckValue - (this.specialCheckValue + this.balance);
+            }
+
+            if(this.specialCheckValueInUse == this.specialCheckValue){
+                this.specialCheckValueInUse = this.specialCheckValueInUse + (this.specialCheckValueInUse * (20D/100D));
+                this.balance = this.specialCheckValueInUse * (-1);
+            }
+
     }
 }
