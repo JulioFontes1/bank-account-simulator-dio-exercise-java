@@ -6,6 +6,7 @@ public class AccountModel {
     private String name;
     private double balance;
     private double specialCheckValue;
+    private double specialCheckValueInUse = 0;
     private boolean useSpecialCheck = false;
 
     public AccountModel() {
@@ -18,6 +19,7 @@ public class AccountModel {
     public AccountModel(String name, double balance) {
         this.name = name;
         this.balance = balance;
+        createAccount(balance);
     }
 
     public boolean isCreatedAccount() {
@@ -58,5 +60,23 @@ public class AccountModel {
 
     public void setUseSpecialCheck(boolean useSpecialCheck) {
         this.useSpecialCheck = useSpecialCheck;
+    }
+
+    private void createAccount(final double initialBalace){
+        if(initialBalace < 500.0){
+            this.specialCheckValue = 50.0;
+        }else {
+            this.specialCheckValue = initialBalace * (50D /100D);
+        }
+    }
+
+    public double getSpecialCheckValueInUse() {
+        return specialCheckValueInUse;
+    }
+
+    public void setSpecialCheckValueInUse() {
+        if(this.balance < 0){
+            this.specialCheckValueInUse = this.specialCheckValue - (this.specialCheckValue + this.balance);
+        }
     }
 }

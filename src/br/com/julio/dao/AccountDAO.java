@@ -1,25 +1,17 @@
 package br.com.julio.dao;
+import br.com.julio.exception.SpecialCheckNotSufficient;
 import br.com.julio.model.AccountModel;
+import br.com.julio.validator.AccountValidator;
 
 public class AccountDAO {
 
     private final AccountModel accountModel;
 
+
     public AccountDAO(AccountModel accountModel) {
         this.accountModel = accountModel;
     }
 
-    public void createAccount(final String name, final double initialBalace){
-        accountModel.setCreatedAccount(true);
-        accountModel.setName(name);
-        accountModel.setBalance(initialBalace);
-
-        if(initialBalace < 500.0){
-            accountModel.setSpecialCheckValue(50.0);
-        }else {
-            double specialCheckValue = initialBalace * (50D /100D);
-        }
-    }
 
     public double consultBalance(){
         return accountModel.getBalance();
@@ -27,6 +19,10 @@ public class AccountDAO {
 
     public double consultSpecialCheck(){
         return accountModel.getSpecialCheckValue();
+    }
+
+    public double consultSpecialCheckInUse(){
+        return accountModel.getSpecialCheckValueInUse();
     }
 
     public boolean isUseSpecialCheck(){
@@ -46,13 +42,24 @@ public class AccountDAO {
     }
 
     public void makeWithDraw(final double value){
-        double currentBalance = accountModel.getBalance();
 
-        double balance = currentBalance - value;
-        if (balance < 0){
-            accountModel.setUseSpecialCheck(true);
+
+        try {
+            double specialCheckValue = accountModel.getSpecialCheckValue();
+            double currentBalance = accountModel.getBalance();
+            double balance = currentBalance - value;
+
+            AccountValidator.specialCheckValidator(specialCheckValue, balance, value);
+
+            if (balance < 0){
+                accountModel.setUseSpecialCheck(true);
+            }
+            accountModel.setBalance(balance);
+        }catch (SpecialCheckNotSufficient ex){
+            ex.printStackTrace();
         }
-        accountModel.setBalance(balance);
+
+
     }
 
     public void makePayment(final double value){
@@ -65,5 +72,7 @@ public class AccountDAO {
 
         accountModel.setBalance(balance);
     }
+
+
 
 }

@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 import br.com.julio.dao.AccountDAO;
+import br.com.julio.exception.SpecialCheckNotSufficient;
 import br.com.julio.model.AccountModel;
 import br.com.julio.model.MenuOption;
 
@@ -50,7 +51,9 @@ public class Main {
 
             switch (selectedOption){
                 case CONSULT_BALANCE -> System.out.println(dao.consultBalance());
-                case CONSULT_SPECIAL_CHECK -> System.out.println(dao.consultSpecialCheck());
+                case CONSULT_SPECIAL_CHECK -> {
+                    System.out.printf("Você usou R$ %s de R$ %s disponível no seu cheque especial", dao.consultSpecialCheckInUse(), dao.consultSpecialCheck());
+                }
                 case MAKE_DEPOSIT -> {
                     System.out.println("Quanto deseja depositar?");
                     double value = scanner.nextDouble();
@@ -60,8 +63,15 @@ public class Main {
                 case WITHDRAW -> {
                     System.out.println("Quanto deseja sacar?");
                     double value = scanner.nextDouble();
-                    dao.makeWithDraw(value);
-                    System.out.printf("Saque realizado no valor de %s", value);
+
+                    try {
+
+                        dao.makeWithDraw(value);
+                        System.out.printf("Saque realizado no valor de %s\n", value);
+
+                    } catch (SpecialCheckNotSufficient ex) {
+                        System.out.println(ex.getMessage());
+                    }
                 }
                 case MAKE_PAYMENT -> {
                     System.out.println("Executando pagamento");
